@@ -1,0 +1,123 @@
+---
+title: "project2"
+author: "Haoming Chen"
+date: "2025-10-03"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+## Introduction
+
+I choose three datasets from the discussion forum, which are airbooking_table, film_review_table and students_grades_table.
+They are all in a wide format and I am going to tidy and transform them into long format using tidyverse library. 
+
+## 1. Air Booking Table 
+
+```{r air_booking}
+# The first table is about air booking agencies.
+ab <- read.csv('https://raw.githubusercontent.com/vincent-usny/607_project2/refs/heads/main/airbooking_table.csv')
+
+ab <- ab %>%
+  pivot_longer(
+    cols = c(Winter, Spring, Summer, Fall),
+    names_to = "Season",
+    values_to = "Price"
+  )
+```
+
+```{r}
+# compare avg_price by season among agencies
+ab %>%
+  group_by(Agency,Season) %>%
+  summarise(avg_price = round(mean(Price))) %>%
+  arrange(desc(avg_price))
+```
+
+```{r}
+# compare the services' avg_price among agencies
+ab %>%
+  group_by(Agency, Service)%>%
+  summarise(avg_price = mean(Price)) %>%
+  arrange(desc(avg_price))
+```
+
+```{r plot_ab}
+ggplot(ab, aes(x = Season, y = Price, color = Service, group = Service)) + geom_line() + facet_wrap(~Agency)
+```
+
+# 2. Film Review Table
+
+```{r}
+film <- read.csv('https://raw.githubusercontent.com/vincent-usny/607_project2/refs/heads/main/film_review_table.csv')
+
+film <- film %>%
+  pivot_longer(
+    cols = c(Daniel,Eleana,Susan,Winnie,Aiden),
+    names_to = "Reviewer",
+    values_to = "Rating"
+  )
+```
+
+```{r}
+# average rating per film
+film %>%
+  group_by(Film) %>%
+  summarise(avg_rating = round(mean(Rating),2)) %>%
+  arrange(desc(avg_rating))
+```
+
+```{r}
+ggplot(film, aes(x = Film, y = Reviewer, fill = Rating)) +
+  geom_tile() +
+  scale_fill_gradient(low = "white", high = "blue")
+# This tile plot shows each reviewer's rating toward each film.
+# We can also see some reviewers tend to give higer ratings. 
+```
+
+## 3. Students Grades Table
+
+```{r}
+grades <- read.csv('https://raw.githubusercontent.com/vincent-usny/607_project2/refs/heads/main/students_grades_table.csv')
+
+grades <- grades %>%
+  pivot_longer(
+    cols = c(Math, Science, English),
+    names_to = "Subject",
+    values_to = "Score"
+  )
+```
+
+```{r}
+# compare each student's overall avg_score each year
+grades %>%
+  group_by(Student, Year) %>%
+  summarise(avg_score = round(mean(Score),1)) %>%
+  arrange(desc(avg_score))
+```
+
+```{r}
+# rank each subject's avg_score among students 
+grades %>%
+  group_by(Student, Subject) %>%
+  summarise(avg_score = round(mean(Score),1)) %>%
+  arrange(Subject,desc(avg_score))
+```
+
+```{r plot}
+ggplot(grades, aes(x = Year, y = Score, color = Subject, group = Subject)) + 
+  geom_line() + 
+  facet_wrap(~Student)
+
+# we can see David's overall performance is the worst while Caro's is the best.
+# Alice is the second and Bob is the third. It's quite clear.
+```
+
+## Conclusion
+
+These three wide datasets are successfully tidied and transformed into long formats.
+The data is analyzed in some levels while I think the line chart and the tile 
+chart perform pretty well to describe the data.
