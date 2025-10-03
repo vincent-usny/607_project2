@@ -33,7 +33,7 @@ ab <- ab %>%
 # compare avg_price by season among agencies
 ab %>%
   group_by(Agency,Season) %>%
-  summarise(avg_price = round(mean(Price))) %>%
+  summarise(avg_price = round(mean(Price))， .groups = "drop") %>%
   arrange(desc(avg_price))
 ```
 
@@ -41,7 +41,7 @@ ab %>%
 # compare the services' avg_price among agencies
 ab %>%
   group_by(Agency, Service)%>%
-  summarise(avg_price = mean(Price)) %>%
+  summarise(avg_price = mean(Price), .groups = "drop") %>%
   arrange(desc(avg_price))
 ```
 
@@ -66,7 +66,7 @@ film <- film %>%
 # average rating per film
 film %>%
   group_by(Film) %>%
-  summarise(avg_rating = round(mean(Rating),2)) %>%
+  summarise(avg_rating = round(mean(Rating),2), .group = "drop") %>%
   arrange(desc(avg_rating))
 ```
 
@@ -95,7 +95,7 @@ grades <- grades %>%
 # compare each student's overall avg_score each year
 grades %>%
   group_by(Student, Year) %>%
-  summarise(avg_score = round(mean(Score),1)) %>%
+  summarise(avg_score = round(mean(Score),1), .groups = "drop") %>%
   arrange(desc(avg_score))
 ```
 
@@ -103,7 +103,7 @@ grades %>%
 # rank each subject's avg_score among students 
 grades %>%
   group_by(Student, Subject) %>%
-  summarise(avg_score = round(mean(Score),1)) %>%
+  summarise(avg_score = round(mean(Score),1), .groups = "drop") %>%
   arrange(Subject,desc(avg_score))
 ```
 
